@@ -1,0 +1,34 @@
+data-analyzer/
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── routes/
+│   │   │   ├── auth.py
+│   │   │   ├── upload.py
+│   │   │   ├── analysis.py
+│   │   │   └── query.py
+│   │   ├── services/
+│   │   │   ├── data_processor.py
+│   │   │   ├── visualization.py
+│   │   │   └── report_generator.py
+│   │   ├── models/
+│   │   │   ├── user.py
+│   │   │   └── upload.py
+│   │   ├── database/
+│   │   │   └── connection.py
+│   │   └── utils/
+│   │       ├── auth_utils.py
+│   │       └── nlp_mapper.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── utils/
+│   │   └── App.jsx
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+├── .github/workflows/ci-cd.yml
+└── README.md
