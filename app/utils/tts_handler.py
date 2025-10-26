@@ -1,13 +1,26 @@
 import os
-from gtts import gTTS
+import time
+from pathlib import Path
+import pyttsx3
 
-AUDIO_DIR = "static/audio"
+def synthesize_audio(text: str, audio_dir: str = "static/audio", rate: int = 105):
+    """
+    Generate dyslexia-friendly audio for a phrase or sentence.
+    - Offline, smooth, slower speech
+    - Reads entire text naturally (multi-word)
+    """
+    Path(audio_dir).mkdir(parents=True, exist_ok=True)
+    safe_name = "".join(ch for ch in text if ch.isalnum() or ch in ('-', '_')).lower()
+    filename = f"{safe_name}_{int(time.time())}.mp3"
+    out_path = Path(audio_dir) / filename
 
-def get_or_generate_tts(word: str) -> str:
-    file_path = f"{AUDIO_DIR}/{word}.mp3"
-    os.makedirs(AUDIO_DIR, exist_ok=True)
-    
-    if not os.path.exists(file_path):
-        tts = gTTS(text=word, lang='en')
-        tts.save(file_path)
-    return file_path
+    engine = pyttsx3.init()
+    engine.setProperty("rate", rate)  # slower for clarity
+    voices = engine.getProperty("voices")
+    engine.setProperty("voice", voices[0].id)  # choose a clear voice
+
+    # Read the entire text normally
+    engine.save_to_file(text, str(out_path))
+    engine.runAndWait()
+
+    return f"/{out_path.as_posix()}"

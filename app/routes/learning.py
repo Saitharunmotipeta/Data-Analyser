@@ -1,16 +1,41 @@
-from fastapi import APIRouter, Form
-from app.utils.phonetics import get_phonetics_syllables
-from app.utils.tts_handler import get_or_generate_tts
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
+from app.utils.phonetics import word_to_phonemes, arpabet_to_visual
+from app.utils.tts_handler import synthesize_audio
+import os
 
-router = APIRouter(prefix="/learn", tags=["Learning"])
+router = APIRouter()
+AUDIO_DIR = os.getenv("AUDIO_DIR", "static/audio")
 
-@router.post("/process")
-async def process_word(word: str = Form(...)):
-    data = get_phonetics_syllables(word)
-    audio_path = get_or_generate_tts(word)
+class WordRequest(BaseModel):
+    text: str = Field(..., alias="word")  # allows "word" or "text"
+    rate: int = 105                        # optional, default slow speech
+
+    class Config:
+        allow_population_by_field_name = True
+
+@router.post("/analyze")
+def analyze_text(data: WordRequest):
+    text = data.text.strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="No text provided.")
+
+    words = text.split()
+    phonemes_list = []
+    visual_list = []
+
+    for w in words:
+        phonemes = word_to_phonemes(w)
+        phonemes_list.append(phonemes)
+        visual_list.append(arpabet_to_visual(phonemes))
+
+    # Generate smooth, dyslexia-friendly audio for the full text
+    audio_url = synthesize_audio(text, AUDIO_DIR, rate=data.rate)
+
     return {
-        "word": word,
-        "syllables": data["syllables"],
-        "phonemes": data["phonemes"],
-        "audio_url": f"/{audio_path}"
+        "ok": True,
+        "text": text,
+        "phonemes": phonemes_list,
+        "visual": visual_list,
+        "audio": audio_url
     }

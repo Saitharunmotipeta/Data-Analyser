@@ -1,10 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import learning
+from dotenv import load_dotenv
+from app.routes.learning import router as learning_router
+from app.routes.users import router as users_router
 
-app = FastAPI(title="Dyslexia Learning Backend")
+load_dotenv()
 
-# Allow frontend access
+app = FastAPI(title="LEARN Phonetics API")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -13,9 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register routes
-app.include_router(learning.router)
-
-@app.get("/")
-def home():
-    return {"message": "Dyslexia Learning Backend is running 🚀"}
+# Register routers
+app.include_router(learning_router, prefix="/api/learning", tags=["learning"])
+app.include_router(users_router, prefix="/api/users", tags=["users"])

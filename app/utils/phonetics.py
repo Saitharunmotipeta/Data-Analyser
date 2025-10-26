@@ -1,25 +1,20 @@
-import os
-from phonemizer import phonemize
-import pyphen
+import pronouncing
 
-# Point to the new location
-os.environ['PHONEMIZER_ESPEAK_PATH'] = r"C:\Users\saitharun\eSpeak NG\espeak-ng.exe"
+def word_to_phonemes(word: str):
+    """
+    Convert a word to its phonetic representation using CMUdict.
+    If not found, fallback to the original word.
+    """
+    word = word.lower().strip()
+    phones = pronouncing.phones_for_word(word)
+    if phones:
+        return phones[0]
+    return word  # fallback to actual word
 
-def get_phonetics_syllables(word: str):
-    # Syllables using pyphen
-    dic = pyphen.Pyphen(lang='en')
-    syllables = dic.inserted(word).split('-')
-
-    # Phonemes using Phonemizer
-    phonemes = phonemize(
-        word,
-        language='en-us',
-        backend='espeak',  # use 'espeak' backend, not 'espeak-ng'
-        strip=True,
-        preserve_punctuation=True
-    ).split()
-
-    return {"syllables": syllables, "phonemes": phonemes}
-
-# Test
-print(get_phonetics_syllables("hello"))
+def arpabet_to_visual(arpabet_str: str):
+    """
+    Convert ARPAbet string to a list of visual boxes for frontend display.
+    Example: "HH AH0 L OW1" -> [{'text': 'HH'}, {'text': 'AH0'}, ...]
+    """
+    tokens = arpabet_str.split()
+    return [{"text": t} for t in tokens]
