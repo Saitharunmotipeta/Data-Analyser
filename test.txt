@@ -33,6 +33,7 @@ data-analyzer/
 ├── .github/workflows/ci-cd.yml
 └── README.md
 
+Git commands to do push operation
 
 git init
 git add README.md
