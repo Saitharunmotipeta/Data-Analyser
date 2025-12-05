@@ -5,6 +5,7 @@ data-analyzer/
 │   │   ├── routes/
 │   │   │   ├── auth.py
 │   │   │   ├── upload.py
+│   │   │   ├── streamlit.py
 │   │   │   ├── analysis.py
 │   │   │   └── query.py
 │   │   ├── services/
@@ -42,4 +43,4 @@ git branch -M main
 git remote add origin https://github.com/Saitharunmotipeta/Data-Analyser.git
 git push -u origin main
 
-reswumed due to major project and internship will do after a bit
+reswumed due to major project and internship will do after a bit 
